@@ -37,9 +37,20 @@ connectDB()
 //         credentials:true,
 //     })
 // )
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173"], // your frontend
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: ["http://localhost:5173"], // your frontend
+    origin: [
+      "http://localhost:5173", // local
+      "https://ai-power-learner.vercel.app" // deployed frontend
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
