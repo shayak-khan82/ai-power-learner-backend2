@@ -49,7 +49,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://ai-power-learner.vercel.app"git add .
+      "https://ai-power-learner.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
