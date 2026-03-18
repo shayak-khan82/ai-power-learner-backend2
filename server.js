@@ -49,7 +49,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // local
-      "https://ai-power-learner.vercel.app" // deployed frontend
+      "https://ai-power-learner.vercel.app",
+      "https://ai-power-learner.vercel.app/login" // deployed frontend
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
