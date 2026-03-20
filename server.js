@@ -51,7 +51,7 @@ app.use(
       "http://localhost:5173",
       "https://ai-power-learner-frontend.vercel.app"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
