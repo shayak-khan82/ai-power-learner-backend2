@@ -140,13 +140,7 @@ connectDB();
 
 
 // 🔥 1. HANDLE PREFLIGHT FIRST (VERY IMPORTANT)
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "https://ai-power-learner-frontend.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  return res.sendStatus(200);
-});
+
 
 
 // 🔥 2. APPLY CORS HEADERS TO ALL REQUESTS
