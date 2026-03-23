@@ -1,115 +1,197 @@
-import dotenv from "dotenv"
-dotenv.config()
+// import dotenv from "dotenv"
+// dotenv.config()
 
 
-import express from "express"
-import cors from 'cors'
-import path from 'path'
-import { fileURLToPath } from "url"
-import connectDB from "./config/db.js"
-import errorHandler from "./middleware/errorHandler.js"
+// import express from "express"
+// import cors from 'cors'
+// import path from 'path'
+// import { fileURLToPath } from "url"
+// import connectDB from "./config/db.js"
+// import errorHandler from "./middleware/errorHandler.js"
 
 
-import authRoutes from './routes/authRoutes.js'
-import documentRoutes from './routes/documentRoutes.js'
-import flashcardRoutes from './routes/flashcardRoutes.js'
-import aiRoutes from './routes/aiRoutes.js'
-import quizRoutes from  './routes/quizRoutes.js'
-import progressRoutes from  './routes/progressRoutes.js'
-//es6
-const _filename = fileURLToPath(import.meta.url)
-const _dirname = path.dirname(_filename)
+// import authRoutes from './routes/authRoutes.js'
+// import documentRoutes from './routes/documentRoutes.js'
+// import flashcardRoutes from './routes/flashcardRoutes.js'
+// import aiRoutes from './routes/aiRoutes.js'
+// import quizRoutes from  './routes/quizRoutes.js'
+// import progressRoutes from  './routes/progressRoutes.js'
+// //es6
+// const _filename = fileURLToPath(import.meta.url)
+// const _dirname = path.dirname(_filename)
 
-//Initialize express app
+// //Initialize express app
 
-const app = express()
+// const app = express()
 
-//connect to MongoDb
-connectDB()
+// //connect to MongoDb
+// connectDB()
 
-//middleware to handle CORS
+// //middleware to handle CORS
 
-// app.use(
-//     cors({
-//         origin:"*",
-//         methods:["GET","POST","PUT","DELETE"],
-//         allowedHeaders:["Content-Type","Authorization"],
-//         credentials:true,
+// // app.use(
+// //     cors({
+// //         origin:"*",
+// //         methods:["GET","POST","PUT","DELETE"],
+// //         allowedHeaders:["Content-Type","Authorization"],
+// //         credentials:true,
+// //     })
+// // )
+// // app.use(
+// //   cors({
+// //     origin: ["http://localhost:5173"], // your frontend
+// //     methods: ["GET", "POST", "PUT", "DELETE"],
+// //     allowedHeaders: ["Content-Type", "Authorization"],
+// //     credentials: true,
+// //   })
+// // );
+// // app.use(
+// //   cors({
+// //     origin: [
+// //       "http://localhost:5173",
+// //       "https://ai-power-learner-frontend.vercel.app"
+// //     ],
+// //    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+// //     allowedHeaders: ["Content-Type", "Authorization"],
+// //     credentials: true,
+// //   })
+// // );
+// // app.use(cors({
+// //   origin: true,   // 🔥 allow all origins dynamically
+// //   credentials: true
+// // }));
+
+// // app.options("*", cors());
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://ai-power-learner-frontend.vercel.app");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   res.header("Access-Control-Allow-Credentials", "true");
+
+//   // 🔥 THIS IS THE KEY FIX
+//   if (req.method === "OPTIONS") {
+//     return res.status(200).end();
+//   }
+
+//   next();
+// });
+
+
+// app.use(express.json())
+// app.use(express.urlencoded({ extended: true}))
+
+// //STATIC folder for upload
+
+// app.use('/uploads', express.static(path.join(_dirname,'uploads')))
+// //Routes
+
+// app.use('/api/auth',authRoutes)
+// app.use('/api/documents', documentRoutes)
+// app.use('/api/flashcards',flashcardRoutes)
+// app.use('/api/ai',aiRoutes)
+// app.use('/api/quizzes',quizRoutes)
+// app.use('/api/progress',progressRoutes)
+// app.use(errorHandler);
+
+// //404 handle
+
+// app.use((req,res) => {
+//     res.status(404).json({
+//         success:false,
+//         error:'Routes not found',
+//         statusCodes:404
 //     })
-// )
-// app.use(
-//   cors({
-//     origin: ["http://localhost:5173"], // your frontend
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//     credentials: true,
-//   })
-// );
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:5173",
-//       "https://ai-power-learner-frontend.vercel.app"
-//     ],
-//    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//     credentials: true,
-//   })
-// );
-// app.use(cors({
-//   origin: true,   // 🔥 allow all origins dynamically
-//   credentials: true
-// }));
+// })
 
-// app.options("*", cors());
+
+// const PORT = process.env.PORT || 8000;
+// app.listen(PORT,() => {
+//     console.log(`Server running in ${process.env.NODE_ENV} mode on port${PORT}`)
+// })
+
+// process.on('unhandledRejection',(err)=>{
+//     console.error(`Error:${err.message}`)
+//     process.exit(1);
+// })
+
+import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import connectDB from "./config/db.js";
+import errorHandler from "./middleware/errorHandler.js";
+
+import authRoutes from "./routes/authRoutes.js";
+import documentRoutes from "./routes/documentRoutes.js";
+import flashcardRoutes from "./routes/flashcardRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
+import quizRoutes from "./routes/quizRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
+
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = path.dirname(_filename);
+
+const app = express();
+
+// ✅ Connect DB
+connectDB();
+
+
+// 🔥 1. HANDLE PREFLIGHT FIRST (VERY IMPORTANT)
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "https://ai-power-learner-frontend.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  return res.sendStatus(200);
+});
+
+
+// 🔥 2. APPLY CORS HEADERS TO ALL REQUESTS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://ai-power-learner-frontend.vercel.app");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
-
-  // 🔥 THIS IS THE KEY FIX
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   next();
 });
 
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true}))
+// ✅ BODY PARSER
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-//STATIC folder for upload
 
-app.use('/uploads', express.static(path.join(_dirname,'uploads')))
-//Routes
+// ✅ STATIC FILES
+app.use("/uploads", express.static(path.join(_dirname, "uploads")));
 
-app.use('/api/auth',authRoutes)
-app.use('/api/documents', documentRoutes)
-app.use('/api/flashcards',flashcardRoutes)
-app.use('/api/ai',aiRoutes)
-app.use('/api/quizzes',quizRoutes)
-app.use('/api/progress',progressRoutes)
+
+// ✅ ROUTES
+app.use("/api/auth", authRoutes);
+app.use("/api/documents", documentRoutes);
+app.use("/api/flashcards", flashcardRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/progress", progressRoutes);
+
+
+// ✅ ERROR HANDLER
 app.use(errorHandler);
 
-//404 handle
 
-app.use((req,res) => {
-    res.status(404).json({
-        success:false,
-        error:'Routes not found',
-        statusCodes:404
-    })
-})
+// ✅ 404 (LAST)
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: "Routes not found",
+    statusCodes: 404,
+  });
+});
 
 
 const PORT = process.env.PORT || 8000;
-app.listen(PORT,() => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port${PORT}`)
-})
-
-process.on('unhandledRejection',(err)=>{
-    console.error(`Error:${err.message}`)
-    process.exit(1);
-})
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
